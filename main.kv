@@ -1,0 +1,52 @@
+#:kivy 1.11.1
+#:import platform kivy.utils.platform
+#:import XCamera kivy_garden.xcamera
+
+# size_hint: Represents how much space the widget should use relative to its parent’s width.
+# pos_hint: Set position of widget inside its parent layout.
+# file chooser is best described here https://kivy.org/doc/stable/api-kivy.uix.filechooser.html
+# on_submit does not work in filechooser
+# app.user_data_dir
+<MainLayout>:
+    orientation: 'vertical'
+    id: mainlayoutid
+    TextInput:
+        id: fchash
+        size_hint: (1, .3)
+        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+        text: root.fchash_text
+        focus: root.fchash_focus
+    TabbedPanel:
+        id: tabpanel
+        size_hint: (1, .7)
+        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+        do_default_tab: False
+        TabbedPanelItem:
+            id: tab1
+            text: 'Open File'
+            BoxLayout:
+                orientation: 'vertical'
+                BoxLayout:
+                    size_hint_y: None
+                    height: sp(52)
+                    Button:
+                        text: 'Icon View'
+                        on_press: fc.view_mode = 'icon'
+                    Button:
+                        text: 'List View'
+                        on_press: fc.view_mode = 'list'
+                FileChooser:
+                    id: fc
+                    orientation: 'vertical'
+                    on_selection: mainlayoutid.on_file_select(*args)
+                    dirselect: False
+                    multiselect: False
+                    rootpath: '/storage/emulated/0' if platform == 'android' else '/tmp/'
+                    FileChooserIconLayout
+                    FileChooserListLayout
+        TabbedPanelItem:
+            text: 'New Photo'
+            BoxLayout:
+                orientation: 'vertical'
+                XCamera:
+                    id: camera
