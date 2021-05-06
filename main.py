@@ -41,6 +41,8 @@ if platform == 'android':
 
 class MainLayout(BoxLayout):
     fchash_text = StringProperty()
+    # TODO: allow user to customize the salt based on their email-address/username.
+    # binary encode their ascii input to create the salt bytes.
     hasher = pbkdf2_sha512.using(rounds=1600, salt_size=10)
 
     def on_file_select(self, fc: FileChooser, filenames: PT.List[str]):
