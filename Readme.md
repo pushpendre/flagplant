@@ -12,5 +12,5 @@ If you have a text, or an image, or a video of less than 2GB size on your phone 
 
 ## Technology
 
-The app is written in python using Kivy. 
+The app is written in python using Kivy. You can download a compiled apk at https://github.com/pushpendre/flagplant/blob/master/bin/ 
 
