@@ -39,10 +39,8 @@ if platform == 'android':
         # Permission.INTERNET,
     ])
 
-
 class MainLayout(BoxLayout):
     fchash_text = StringProperty()
-    fchash_focus = BooleanProperty(defaultvalue=False)
     hasher = pbkdf2_sha512.using(rounds=1600, salt_size=10)
 
     def on_file_select(self, fc: FileChooser, filenames: PT.List[str]):
