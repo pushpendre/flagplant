@@ -67,16 +67,6 @@ class MainApp(App):
     def build(self):
         return MainLayout()
 
-# ToggleButton:
-#     text: 'Play'
-#     on_press: camera.play = not camera.play
-#     size_hint_y: None
-#     height: '48dp'
-# Button:
-#     text: 'Capture'
-#     size_hint_y: None
-#     height: '48dp'
-#     on_press: mainlayoutid.camera_picture_capture()
 if __name__ == '__main__':
     app = MainApp()
     app.run()
