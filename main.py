@@ -7,6 +7,8 @@ The TabbedPanel widget manages different widgets in tabs,
 
 BoxLayout arranges children in a vertical or horizontal box
 
+See youtu.be/sa4AVMjjzNo and stackoverflow.com/questions/44482937 for kivy.core.window
+
 """
 import os, time, re
 from os.path import dirname, join
@@ -31,6 +33,7 @@ from kivy.uix.filechooser import FileChooser
 from kivy.properties import StringProperty, BooleanProperty
 from kivy.utils import platform
 
+
 if platform == 'android':
     from android.permissions import request_permissions, Permission
     request_permissions([
@@ -39,6 +42,8 @@ if platform == 'android':
         Permission.CAMERA,
         # Permission.INTERNET,
     ])
+
+
 
 def cleanup(s):
     """ Length must be divisible by 4
@@ -55,31 +60,38 @@ def cleanup(s):
 class MainLayout(BoxLayout):
     fchash_text = StringProperty()
     username_transformed = StringProperty()
-
-    def on_file_select(self, fc: FileChooser, filenames: PT.List[str]):
-        assert len(filenames) == 1
-        fn = filenames[0]
+    def get_hasher(self):
         ut = self.username_transformed
         custom_salt = ab64_decode(cleanup(ut)) if ut else None
         hasher = (pbkdf2_sha512.using(salt=custom_salt, rounds=1600)
                   if custom_salt
                   else pbkdf2_sha512.using(rounds=1600, salt_size=10))
+        return hasher
+
+    def get_hash(self, fn, show_basename=True):
+        hasher = self.get_hasher()
         try:
             h = hasher.hash(open(fn, 'rb').read())
         except:
             h = 'Unable to open!'
         try:
-            self.fchash_text = os.path.basename(fn) + '\n\n' + h
+            self.fchash_text = (os.path.basename(fn) if show_basename else fn) + '\n\n' + h
         except Exception as exception:
             print(exception)
         return
 
-    def camera_picture_capture(self):
-        camera = self.ids['camera']
-        timestr = time.strftime("%Y%m%d_%H%M%S")
-        fn = "IMG_{}.png".format(timestr)
-        camera.export_to_png(fn)
-        print("Captured " + fn)
+    def on_file_select(self, fc: FileChooser, filenames: PT.List[str]):
+        assert len(filenames) == 1
+        return self.get_hash(filenames[0])
+
+    def camera_picture_capture(self, obj, filename):
+        print(filename)
+        return self.get_hash(filename)
+
+    def camera_ready_callback(self):
+        # from kivy_garden.xcamera.platform_api import LANDSCAPE, PORTRAIT, set_orientation
+        # set_orientation(LANDSCAPE)
+        pass
 
     def username_textinput_callback(self, text):
         self.username_transformed = cleanup(text)
@@ -87,6 +99,9 @@ class MainLayout(BoxLayout):
 
 class MainApp(App):
     def build(self):
+        from kivy.core.window import Window
+        # Window.keyboard_anim_args = {'d': .2, 't': 'in_out_expo'}
+        Window.softinput_mode = "below_target"
         return MainLayout()
 
 if __name__ == '__main__':

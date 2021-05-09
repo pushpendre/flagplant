@@ -2,9 +2,11 @@
 #:import platform kivy.utils.platform
 #:import XCamera kivy_garden.xcamera
 #:import CustomTextInput main_impl
+#:import XCameraIconButton kivy_garden.xcamera.xcamera
 # size_hint: Represents how much space the widget should use relative to its parent’s width.
 # pos_hint: Set position of widget inside its parent layout.
 # file chooser is best described here https://kivy.org/doc/stable/api-kivy.uix.filechooser.html
+# The label is best described in http://inclem.net/2014/07/05/kivy/kivy_label_text/
 # on_submit does not work in filechooser
 # app.user_data_dir
 <MainLayout>:
@@ -53,24 +55,26 @@
                 orientation: 'vertical'
                 XCamera:
                     id: camera
+                    on_picture_taken: mainlayoutid.camera_picture_capture(*args)
+                    on_camera_ready: mainlayoutid.camera_ready_callback(*args)
+                    directory: '/storage/emulated/0/DCIM/' if platform == 'android' else '/tmp/'
         TabbedPanelItem:
             text: 'User Name'
             BoxLayout:
                 orientation: 'vertical'
                 Label:
                     markup: True
-                    text_size: root.width, None
-                    size: self.texture_size
-                    text: '\n\n[b]Instructions[/b]\n[b]1.[/b] The username should ideally uniquely identify you, so it can be your email address, or a twitter handle, but your real name is probably not unique enough.\n[b]2.[/b] The username can only contain alphanumeric characters and the period symbol.\n[b]3.[/b] The length of the username must be a multiple of 4.\n\n When you enter a username the app will automatically transform the input to an acceptable string. You can edit the original input and see its effect in real-time.'
-                Label:
-                    text: '[b]Configured Username[/b]'
-                    markup: True
-                    size: self.texture_size
-                    text_size: root.width, None
+                    text_size: self.width, None
+                    height: self.texture_size[1]
+                    size_hint_y: None
+                    pos_hint: {'x': 0.01, 'y': 0}
+                    text: '[b]Instructions[/b]\n[b]1.[/b] The username can be any string that uniquely identifies you, like an email address, or your twitter handle.\n[b]2.[/b] The username can only contain alphabets or numbers and the `.` character.\n[b]3.[/b] The length of the username must be a multiple of 4.\n\n When you enter the username the app will automatically transform the input to an acceptable string. You can edit the original input and see its effect in real-time.\n\n[b]Configured Username[/b]'
+                    padding_x: (20, 20)
+                    padding_y: (20, 20)
                 Label:
                     text: mainlayoutid.username_transformed
-                    size: self.texture_size
                     text_size: root.width, None
+                    halign: 'center'
                 TextInput:
                     id: username_textinput
                     on_text: mainlayoutid.username_textinput_callback(self.text)
