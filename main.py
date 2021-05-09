@@ -8,12 +8,13 @@ The TabbedPanel widget manages different widgets in tabs,
 BoxLayout arranges children in a vertical or horizontal box
 
 """
-import os, time
+import os, time, re
 from os.path import dirname, join
 os.environ['PASSLIB_MAX_PASSWORD_SIZE'] = str(2 * (1024 ** 3)) # 2GB
 import typing as PT
 
 from passlib.hash import pbkdf2_sha512
+from passlib.utils.binary import ab64_decode, ab64_encode
 
 # Uncomment these lines to see all the messages
 # from kivy.logger import Logger
@@ -39,17 +40,34 @@ if platform == 'android':
         # Permission.INTERNET,
     ])
 
+def cleanup(s):
+    """ Length must be divisible by 4
+    [a-zA-Z0-9.]*
+
+    https://tools.ietf.org/html/rfc3548.html#page-4
+    """
+    s = re.sub('[^0-9a-zA-Z.]', '.', s)
+    m = len(s) % 4
+    s = s + ('.'*(4 - m) if m else '')
+    return s
+
+
 class MainLayout(BoxLayout):
     fchash_text = StringProperty()
-    # TODO: allow user to customize the salt based on their email-address/username.
-    # binary encode their ascii input to create the salt bytes.
-    hasher = pbkdf2_sha512.using(rounds=1600, salt_size=10)
+    username_transformed = StringProperty()
 
     def on_file_select(self, fc: FileChooser, filenames: PT.List[str]):
         assert len(filenames) == 1
         fn = filenames[0]
-        h = self.hasher.hash(open(fn, 'rb').read())
-        # print(fn, h)
+        ut = self.username_transformed
+        custom_salt = ab64_decode(cleanup(ut)) if ut else None
+        hasher = (pbkdf2_sha512.using(salt=custom_salt, rounds=1600)
+                  if custom_salt
+                  else pbkdf2_sha512.using(rounds=1600, salt_size=10))
+        try:
+            h = hasher.hash(open(fn, 'rb').read())
+        except:
+            h = 'Unable to open!'
         try:
             self.fchash_text = os.path.basename(fn) + '\n\n' + h
         except Exception as exception:
@@ -62,6 +80,10 @@ class MainLayout(BoxLayout):
         fn = "IMG_{}.png".format(timestr)
         camera.export_to_png(fn)
         print("Captured " + fn)
+
+    def username_textinput_callback(self, text):
+        self.username_transformed = cleanup(text)
+        return
 
 class MainApp(App):
     def build(self):

@@ -5,4 +5,3 @@ class CustomTextInput(TextInput):
         bubble = self._bubble
         if not bubble:
             return
-        #bubble_hide()

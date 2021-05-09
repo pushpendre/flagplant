@@ -1,5 +1,5 @@
-1. [X]Fix the keyboard popup issue. Change from text entry to markup
-2. Allow custom username/email-address to be used as the salt.
+1. [X] Fix the keyboard popup issue. Change from text entry to markup
+2. [X] Allow custom username/email-address to be used as the salt.
 3. Fix the camera. https://github.com/kivy/kivy/issues/6919
 4. Add to F-Droid. https://f-droid.org/en/docs/Setup_an_F-Droid_App_Repo/
 5. Add better twitter integration. https://pypi.org/project/KivyAuth/ ?

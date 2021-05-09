@@ -14,7 +14,7 @@
         id: fchash
         size_hint: (1, .2)
         pos_hint: {'center_x': 0.5, 'center_y': 0.5}
-        text: root.fchash_text
+        text: mainlayoutid.fchash_text
         use_bubble: True
         allow_copy: True
         padding_x: (20, 20)
@@ -53,3 +53,24 @@
                 orientation: 'vertical'
                 XCamera:
                     id: camera
+        TabbedPanelItem:
+            text: 'User Name'
+            BoxLayout:
+                orientation: 'vertical'
+                Label:
+                    markup: True
+                    text_size: root.width, None
+                    size: self.texture_size
+                    text: '\n\n[b]Instructions[/b]\n[b]1.[/b] The username should ideally uniquely identify you, so it can be your email address, or a twitter handle, but your real name is probably not unique enough.\n[b]2.[/b] The username can only contain alphanumeric characters and the period symbol.\n[b]3.[/b] The length of the username must be a multiple of 4.\n\n When you enter a username the app will automatically transform the input to an acceptable string. You can edit the original input and see its effect in real-time.'
+                Label:
+                    text: '[b]Configured Username[/b]'
+                    markup: True
+                    size: self.texture_size
+                    text_size: root.width, None
+                Label:
+                    text: mainlayoutid.username_transformed
+                    size: self.texture_size
+                    text_size: root.width, None
+                TextInput:
+                    id: username_textinput
+                    on_text: mainlayoutid.username_textinput_callback(self.text)
