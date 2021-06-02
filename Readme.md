@@ -1,6 +1,6 @@
 # FlagPlanter
 
-The OpenSource FlagPlanter application can be used for:
+The OpenSource FlagPlanter application ([download apk](https://github.com/pushpendre/flagplant/blob/master/bin/ )) can be used for:
 
 1. Protection against "Fake DeepFakes".
 2. Proving possession of a digital artefact before a certain time.
